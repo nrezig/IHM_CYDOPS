@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>ARP Spoofing – CyDOPS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-5">
+<div class="container">
+    <h1 class="mb-4">Comprendre l'ARP Spoofing</h1>
+
+    <div class="text-start">
+        <h4>Protocole ARP</h4>
+        <p>
+            Le protocole ARP (Address Resolution Protocol) est utilisé pour associer les adresses IP aux adresses physiques (MAC) sur un réseau local.
+            Lorsqu'une machine veut communiquer avec une autre machine sur le même réseau local, elle envoie une requête ARP pour obtenir l'adresse MAC associée à l'adresse IP cible.
+            La machine cible répond avec son adresse MAC. Cette association (IP/MAC) est stockée temporairement dans une table appelée cache ARP.
+        </p>
+
+        <h4>ARP Spoofing</h4>
+        <p>
+            Dans une attaque ARP Spoofing, l'attaquant (Kali Linux) envoie de fausses réponses ARP aux victimes pour leur faire croire qu'il possède l'adresse MAC de la passerelle ou d'une autre machine cible.
+            Les victimes mettent alors à jour leur cache ARP avec ces fausses informations.
+        </p>
+        <p>
+            Ainsi, tout le trafic destiné à la passerelle ou à l'autre victime passera d'abord par la machine de l'attaquant.
+            Cette technique permet à l'attaquant d'effectuer une attaque de type Man-in-the-Middle (MITM) en interceptant les échanges réseau.
+        </p>
+    </div>
+
+    <div class="mt-5">
+        <a href="/arp/formulaire" class="btn btn-warning btn-lg">→ Lancer l'attaque (formulaire)</a>
+        <a href="/" class="btn btn-secondary btn-lg ms-3">← Retour à l'accueil</a>
+    </div>
+</div>
+</body>
+</html>
