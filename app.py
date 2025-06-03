@@ -54,6 +54,20 @@ def arp_info():
 def arp_form():
     return render_template('arp2.html')
 
+
+# log ddos
+@app.route('/ddos/logs')
+def ddos_logs():
+    logs_dir = os.path.join(app.root_path, 'attaque', 'logs')
+    logs = sorted(os.listdir(logs_dir), reverse=True)
+    if logs:
+        with open(os.path.join(logs_dir, logs[0]), 'r') as f:
+            content = f.read()
+        return f"<pre>{content}</pre><br><a href='/ddos1'>← Retour</a>"
+    else:
+        return "Aucun log trouvé."
+
+
 # Traitement du formulaire ARP (à séparer plus tard)
 @app.route('/launch_arp', methods=['POST'])
 def launch_arp():

