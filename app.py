@@ -9,8 +9,12 @@ app.secret_key = "cydops_secret"  # nécessaire pour les messages flash
 # Dossier pour les PDF
 UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads')
 
-# Processus de l’attaque ddos
+# Processus de l’attaque DDoS
 ddos_process = None
+
+# ============================
+# Routes principales
+# ============================
 
 # Accueil
 @app.route('/')
@@ -28,7 +32,7 @@ def ddos_attack():
     global ddos_process
     try:
         ddos_process = subprocess.Popen(["python3", "attaque/ddos.py"])
-        flash("Attaque lancée", "danger")
+        flash("Attaque DDoS lancée", "danger")
     except Exception as e:
         flash(f"Erreur lors du lancement : {str(e)}", "danger")
     return redirect(url_for('ddos_info'))
@@ -39,23 +43,12 @@ def ddos_stop():
     global ddos_process
     if ddos_process and ddos_process.poll() is None:
         os.kill(ddos_process.pid, signal.SIGTERM)
-        flash("Attaque arretee", "success")
+        flash("Attaque DDoS arrêtée", "success")
     else:
         flash("Aucune attaque en cours.", "warning")
     return redirect(url_for('ddos_info'))
 
-# Page ARP spoofing – info
-@app.route('/arp1')
-def arp_info():
-    return render_template('arp1.html')
-
-# Page ARP spoofing – formulaire
-@app.route('/arp/formulaire')
-def arp_form():
-    return render_template('arp2.html')
-
-
-# log ddos
+# Logs DDoS
 @app.route('/ddos/logs')
 def ddos_logs():
     logs_dir = os.path.join(app.root_path, 'attaque', 'logs')
@@ -67,29 +60,43 @@ def ddos_logs():
     else:
         return "Aucun log trouvé."
 
+# ============================
+# ARP Spoofing / MITM
+# ============================
 
-# Traitement du formulaire ARP (à séparer plus tard)
+# Page ARP spoofing – info
+@app.route('/arp1')
+def arp_info():
+    return render_template('arp1.html')
+
+# Page ARP spoofing – formulaire
+@app.route('/arp/formulaire')
+def arp_form():
+    return render_template('arp2.html')
+
+# Lancer l’attaque MITM via arpspoof + wireshark
 @app.route('/launch_arp', methods=['POST'])
 def launch_arp():
     victim_ip = request.form['victim_ip']
     gateway_ip = request.form['gateway_ip']
     interface = request.form['interface']
 
-    return f"""
-    <h3>Formulaire reçu :</h3>
-    <ul>
-        <li>IP Victime : {victim_ip}</li>
-        <li>IP Passerelle : {gateway_ip}</li>
-        <li>Interface : {interface}</li>
-    </ul>
-    <a href='/'>Retour</a>
-    """
+    try:
+        subprocess.Popen([
+            "python3", "attaque/arp.py",
+            victim_ip, gateway_ip, interface
+        ])
+        flash("Attaque MITM lancée", "danger")
+    except Exception as e:
+        flash(f"Erreur lors du lancement : {str(e)}", "danger")
+
+    return redirect(url_for('arp_info'))
 
 # Accès aux fichiers PDF
 @app.route('/pdf/<filename>')
 def pdf(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
-# Lancement de l’application
+# Lancement de l’application Flask
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

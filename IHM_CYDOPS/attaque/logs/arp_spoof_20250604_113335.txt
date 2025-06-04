@@ -1,0 +1,7 @@
+Début de l'attaque ARP Spoofing / MITM
+Date : 2025-06-04 11:33:35.893878
+Victime : 10.0.2.5
+Passerelle : 10.0.3.1
+Interface : eth0
+
+[✔] IP forwarding activé
